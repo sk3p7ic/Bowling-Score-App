@@ -29,6 +29,10 @@ public class Player {
     currentFrame += 2; // 0, 2, 4, 6, ... (Because there's 2 throws per normal frame)
   }
 
+  public int getCurrentFrameIndex() {
+    return currentFrame;
+  }
+
   /**
    * Calculates the current scores for each frame.
    */
