@@ -1,62 +1,67 @@
 package sk3p7ic.bsa.app.main;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import sk3p7ic.bsa.app.display.PlayerFrameView;
 import sk3p7ic.bsa.app.display.PlayersView;
-import sk3p7ic.bsa.calculator.main.Player;
-
-import java.util.ArrayList;
 
 public class BowlingScoreApp extends Application {
   public static void main(String[] args) {
-    // TODO: Get rid of demo code.
-    // TODO: Gather list of player names when the application starts
-    //int[] bowls = new int[]{8, 2, 5, 4, 9, 0, 10, 0, 10, 0, 5, 5, 5, 3, 6, 3, 9, 1, 9, 1, 10};
-    int[][] games = new int[][]{
-        new int[]{8, 2, 5, 4, 9, 0, 10, 0, 10, 0, 5, 5, 5, 3, 6, 3, 9, 1, 9, 1, 10},
-        new int[]{10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 0, 10, 10, 10},
-        new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,},
-        new int[]{1, 9, 2, 8, 3, 7, 4, 6, 5, 5, 6, 4, 7, 3, 8, 2, 9, 1, 3, 7, 5}
-    };
-    String playerName = "Joshua Ibrom";
-    for (int[] bowls : games) {
-      try {
-        testPlayer(playerName, bowls);
-      } catch (Exception e) {
-        System.out.println(e.getMessage());
-      }
-    }
-    launch(args);
+    launch(args); // Start the javafx application
   }
 
   @Override
   public void start(Stage primaryStage) throws Exception {
-    primaryStage.setTitle("Bowling Score Calculator");
-    String[] names = new String[]{"Joshua Ibrom", "Foo Bar", "Biz Baz"};
-    PlayersView playersView = new PlayersView(names);
-    Scene mainScene = new Scene(playersView.generatePlayerFrames());
-    primaryStage.setScene(mainScene);
-    primaryStage.show();
+    primaryStage.setTitle("Bowling Score Calculator"); // Set the title to default
+    primaryStage.setResizable(false); // Prevent the user from being able to resize windows
+    getPlayerNamesView(primaryStage); // Gather the names of the players for the game
   }
 
-  public static void testPlayer(String playerName, int[] bowls) {
-    Player player = new Player(playerName);
-    ArrayList<Integer> frameThrows = new ArrayList<>();
-    for (int i = 0; i <= 18; i++) {
-      if (i % 2 != 0) continue;
-      if (i <= 16) {
-        frameThrows.add(bowls[i]);
-        frameThrows.add(bowls[i + 1]);
-      } else {
-        frameThrows.add(bowls[i]);
-        frameThrows.add(bowls[i + 1]);
-        frameThrows.add(bowls[i + 2]);
+  /**
+   * Gathers the names of the players for the application and goes to the PlayersView once the names are gathered.
+   * @param primaryStage The stage that will be used to display the windows in the application.
+   */
+  private void getPlayerNamesView(Stage primaryStage) {
+    primaryStage.setTitle("Bowling Score Calculator -- Player Info Screen");
+    VBox mainBox = new VBox(); // Used to store the elements for the info screen
+    mainBox.setAlignment(Pos.CENTER);
+    TextField numPlayers = new TextField(); // Stores the number of players in the game
+    numPlayers.setPrefColumnCount(3);
+    TextArea playerNames = new TextArea(); // Stores the names of players in the game
+    Button submitBtn = new Button("Submit");
+    mainBox.getChildren().addAll(
+        new HBox(new Label("Enter number of players: "), numPlayers),
+        new VBox(new Label("Enter names of players, each on a new line:"), playerNames),
+        submitBtn
+    );
+    mainBox.setSpacing(10.0f);
+    mainBox.setPadding(new Insets(20));
+    submitBtn.setOnAction(event -> { // When the user clicks the button
+      try {
+        int numberOfPlayers = Integer.parseInt(numPlayers.getText()); // Attempt to get the number of players
+        String[] namesOfPlayers = playerNames.getText().split("\n"); // Split the names into an array of names
+        if (namesOfPlayers.length != numberOfPlayers)
+          throw new Exception("Number of names (" + namesOfPlayers.length + ") does not match number of players (" +
+              numberOfPlayers + ").");
+        else if (numberOfPlayers == 0)
+          throw new Exception("Number of players cannot equal zero.");
+        PlayersView playersView = new PlayersView(namesOfPlayers);
+        primaryStage.setTitle("Bowling Score Calculator");
+        primaryStage.setScene(new Scene(playersView.generatePlayerFrames())); // Show the PlayersView
+        primaryStage.show();
+      } catch (Exception e) {
+        mainBox.getChildren().add(new Label("Error: " + e.getMessage()));
       }
-      int[] results = player.addBowls(frameThrows);
-      for (int result : results) System.out.print(result + " ");
-      System.out.println("\n");
-    }
+    });
+    primaryStage.setScene(new Scene(mainBox)); // Show the player info screen
+    primaryStage.show();
   }
 }
