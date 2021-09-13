@@ -1,10 +1,14 @@
 package sk3p7ic.bsa.app.main;
 
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import sk3p7ic.bsa.app.display.PlayerFrameView;
 import sk3p7ic.bsa.calculator.main.Player;
 
 import java.util.ArrayList;
 
-public class BowlingScoreApp {
+public class BowlingScoreApp extends Application {
   public static void main(String[] args) {
     //int[] bowls = new int[]{8, 2, 5, 4, 9, 0, 10, 0, 10, 0, 5, 5, 5, 3, 6, 3, 9, 1, 9, 1, 10};
     int[][] games = new int[][]{
@@ -21,6 +25,16 @@ public class BowlingScoreApp {
         System.out.println(e.getMessage());
       }
     }
+    launch(args);
+  }
+
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    primaryStage.setTitle("Bowling Score Calculator");
+    PlayerFrameView testView = new PlayerFrameView("Joshua Ibrom");
+    Scene mainScene = new Scene(testView.createPlayerFrames());
+    primaryStage.setScene(mainScene);
+    primaryStage.show();
   }
 
   public static void testPlayer(String playerName, int[] bowls) {
