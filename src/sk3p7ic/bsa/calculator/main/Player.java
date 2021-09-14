@@ -68,6 +68,11 @@ public class Player {
    * @return An array containing the scores for each frame.
    */
   public int[] addBowls(List<Integer> bowls) {
+    // If the user entered the strike as the second number in a standard frame
+    if (bowls.size() <= 18 && (bowls.get(bowls.size() - 2) == 0 && bowls.get(bowls.size() - 1) == 10)) {
+      bowls.set(bowls.size() - 2, 10); // Set the first number to be 10 (a strike)
+      bowls.set(bowls.size() - 1, 0); // Set the second number to be 0
+    }
     for (int i = bowls.size() - 1; i > currentFrame - 1; i--) { // Add the new throws to the end of playerFrames array
       playerFrames[i] = bowls.get(i);
     }
